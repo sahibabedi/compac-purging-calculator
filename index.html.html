@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changeover Cost Calculator | Compac Technologies</title>
+<style>
+  :root {
+    --brand: #238350;
+    --brand-dark: #1a6a40;
+    --tint: #F1FAF3;
+    --ink: #1c2a22;
+    --muted: #5c6e63;
+    --line: #d3e2d8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--tint);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 24px 16px;
+  }
+  .card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(20, 60, 40, 0.10);
+    overflow: hidden;
+  }
+  .head {
+    background: var(--brand);
+    color: #fff;
+    padding: 22px 24px 18px;
+  }
+  .head .kicker {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: #c3e6d0;
+    margin-bottom: 6px;
+  }
+  .head h1 { font-size: 21px; line-height: 1.25; }
+  .head p { font-size: 13px; color: #ddf2e4; margin-top: 6px; }
+  .body { padding: 22px 24px; }
+  .field { margin-bottom: 16px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  label small { font-weight: 400; color: var(--muted); }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+  }
+  input:focus, select:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+  .row { display: flex; gap: 12px; }
+  .row .field { flex: 1; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--brand);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .btn:hover { background: var(--brand-dark); }
+  .results { display: none; border-top: 2px solid var(--brand); margin-top: 22px; padding-top: 18px; }
+  .res-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+  }
+  .res-line .v { font-weight: 700; white-space: nowrap; padding-left: 12px; }
+  .res-big {
+    background: var(--brand);
+    color: #fff;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .res-big .label { font-size: 12px; color: #c3e6d0; text-transform: uppercase; letter-spacing: 1.2px; }
+  .res-big .num { font-size: 30px; font-weight: 800; margin: 2px 0; }
+  .res-big .sub { font-size: 13px; color: #ddf2e4; }
+  .savings {
+    background: var(--tint);
+    border: 1px solid #a9d8bc;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .savings .num { font-size: 20px; font-weight: 800; color: var(--brand); }
+  .savings .label { font-size: 12.5px; color: #2c5942; }
+  .wa {
+    display: block;
+    text-align: center;
+    padding: 13px;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #fff;
+    background: #25D366;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+  .wa:hover { background: #1eb857; }
+  .note { font-size: 11px; color: var(--muted); margin-top: 14px; }
+  .foot {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 14px 24px 20px;
+  }
+  .foot b { color: var(--brand); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <div class="kicker">Compac Technologies · Chem-Trend Distribution Partner</div>
+    <h1>What do colour and material changes cost your plant?</h1>
+    <p>Five inputs, thirty seconds, a monthly figure most plants have never calculated.</p>
+  </div>
+
+  <div class="body">
+    <div class="field">
+      <label>Machine size <small>(sets a typical hour rate at 2 to 2.5x tonnage, edit below if you know yours)</small></label>
+      <select id="tonnage" onchange="prefillRate()">
+        <option value="175">Up to 100T</option>
+        <option value="450" selected>101 to 300T</option>
+        <option value="1075">301 to 650T</option>
+        <option value="1800">Above 650T</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Machine hour rate (Rs.)</label>
+        <input type="number" id="rate" value="450" min="0">
+      </div>
+      <div class="field">
+        <label>Changeovers per week</label>
+        <input type="number" id="perWeek" value="5" min="0">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Minutes per changeover</label>
+        <input type="number" id="minutes" value="60" min="0">
+      </div>
+      <div class="field">
+        <label>Resin flushed per change (kg)</label>
+        <input type="number" id="resinKg" value="20" min="0">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Resin price (Rs./kg)</label>
+        <input type="number" id="resinPrice" value="120" min="0">
+      </div>
+      <div class="field">
+        <label>Scrap value per change (Rs.)</label>
+        <input type="number" id="scrap" value="1500" min="0">
+      </div>
+    </div>
+
+    <button class="btn" onclick="calc()">Show me the number</button>
+
+    <div class="results" id="results">
+      <div class="res-line"><span>Cost of one changeover</span><span class="v" id="perChange"></span></div>
+      <div class="res-line"><span>Changeovers per month</span><span class="v" id="perMonth"></span></div>
+
+      <div class="res-big">
+        <div class="label">Your changeovers cost about</div>
+        <div class="num" id="monthly"></div>
+        <div class="sub">per month, <span id="yearly"></span> per year, per machine</div>
+      </div>
+
+      <div class="savings">
+        <div class="num" id="saveRange"></div>
+        <div class="label">estimated monthly saving with a high-performance purging programme (40 to 70% band, based on published Ultra Purge&trade; trial results)</div>
+      </div>
+
+      <a class="wa" id="waLink" href="#" target="_blank">Get my payback estimate on WhatsApp</a>
+
+      <div class="note">Estimates based on your inputs. The only number that matters is the one from a trial on your own machine: one machine, two weeks, trial material on us. Ultra Purge&trade; is a trademark of Chem-Trend L.P.</div>
+    </div>
+  </div>
+
+  <div class="foot"><b>Compac Technologies India Ltd.</b> · Industrial solutions since 2002 · Jammu · Ludhiana · Mohali</div>
+</div>
+
+<script>
+// ================= CONFIG: edit this one line =================
+const WHATSAPP_NUMBER = "91XXXXXXXXXX"; // country code + number, digits only
+// ==============================================================
+
+function prefillRate() {
+  document.getElementById("rate").value = document.getElementById("tonnage").value;
+}
+
+function fmtINR(n) {
+  if (n >= 1e7) return "Rs. " + (n / 1e7).toFixed(2).replace(/\.00$/, "") + " crore";
+  if (n >= 1e5) return "Rs. " + (n / 1e5).toFixed(2).replace(/\.00$/, "") + " lakh";
+  return "Rs. " + Math.round(n).toLocaleString("en-IN");
+}
+
+function calc() {
+  const rate = +document.getElementById("rate").value || 0;
+  const perWeek = +document.getElementById("perWeek").value || 0;
+  const minutes = +document.getElementById("minutes").value || 0;
+  const resinKg = +document.getElementById("resinKg").value || 0;
+  const resinPrice = +document.getElementById("resinPrice").value || 0;
+  const scrap = +document.getElementById("scrap").value || 0;
+
+  const oneChange = (rate * minutes / 60) + (resinKg * resinPrice) + scrap;
+  const monthlyCount = perWeek * 4.33;
+  const monthly = oneChange * monthlyCount;
+  const yearly = monthly * 12;
+  const saveLow = monthly * 0.4;
+  const saveHigh = monthly * 0.7;
+
+  document.getElementById("perChange").textContent = fmtINR(oneChange);
+  document.getElementById("perMonth").textContent = Math.round(monthlyCount);
+  document.getElementById("monthly").textContent = fmtINR(monthly);
+  document.getElementById("yearly").textContent = fmtINR(yearly);
+  document.getElementById("saveRange").textContent = fmtINR(saveLow) + " to " + fmtINR(saveHigh);
+
+  const tonnageText = document.getElementById("tonnage").selectedOptions[0].text;
+  const msg = "Hi, I used the Compac changeover cost calculator. My monthly changeover cost came to " +
+    fmtINR(monthly) + " (machine: " + tonnageText + ", " + perWeek +
+    " changeovers/week, " + minutes + " min each). Please send me a payback estimate.";
+  document.getElementById("waLink").href =
+    "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);
+
+  document.getElementById("results").style.display = "block";
+  document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+</script>
+</body>
+</html>
