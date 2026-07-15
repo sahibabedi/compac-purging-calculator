@@ -192,13 +192,13 @@
 
       <div class="res-big">
         <div class="label">Your current changeover process costs approximately</div>
-        <div class="num" id="monthly"></div>
-        <div class="sub">per month, <span id="yearly"></span> per year, per machine</div>
+        <div class="num" id="yearlyCost"></div>
+        <div class="sub">per year, that is <span id="monthlyCost"></span> per month, per machine</div>
       </div>
 
       <div class="savings">
         <div class="num" id="saveRange"></div>
-        <div class="label">Estimated monthly savings with a high-performance purging programme (40–70% reduction in overall changeover cost, based on published Ultra Purge™ trial results). Actual savings vary by machine, material and application.</div>
+        <div class="label">Estimated yearly savings with a high-performance purging programme (40–70% reduction in overall changeover cost, based on published Ultra Purge™ trial results). Actual savings vary by machine, material and application.</div>
       </div>
 
       <a class="wa" id="waLink" href="#" target="_blank">Get my payback estimate on WhatsApp</a>
@@ -242,13 +242,13 @@ function calc() {
 
   document.getElementById("perChange").textContent = fmtINR(oneChange);
   document.getElementById("perMonth").textContent = Math.round(monthlyCount);
-  document.getElementById("monthly").textContent = fmtINR(monthly);
-  document.getElementById("yearly").textContent = fmtINR(yearly);
-  document.getElementById("saveRange").textContent = fmtINR(saveLow) + " to " + fmtINR(saveHigh);
+  document.getElementById("yearlyCost").textContent = fmtINR(yearly);
+  document.getElementById("monthlyCost").textContent = fmtINR(monthly);
+  document.getElementById("saveRange").textContent = fmtINR(saveLow * 12) + " to " + fmtINR(saveHigh * 12);
 
   const tonnageText = document.getElementById("tonnage").selectedOptions[0].text;
-  const msg = "Hi, I used the Compac changeover cost calculator. My monthly changeover cost came to " +
-    fmtINR(monthly) + " (machine: " + tonnageText + ", " + perWeek +
+  const msg = "Hi, I used the Compac changeover cost calculator. My yearly changeover cost came to " +
+    fmtINR(yearly) + " (machine: " + tonnageText + ", " + perWeek +
     " changeovers/week, " + minutes + " min each). Please send me a payback estimate.";
   document.getElementById("waLink").href =
     "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg);
